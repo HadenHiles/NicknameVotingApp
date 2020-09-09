@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 void main() {
   runApp(MyApp());
@@ -10,6 +11,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'NickNames',
+      theme: ThemeData(
+        primaryColor: Color.fromARGB(255, 20, 52, 90),
+      ),
       home: MyHomePage(),
     );
   }
@@ -28,6 +32,10 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text('Nickname Votes'),
       ),
       body: _buildBody(context),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.plus_one),
+        onPressed: _newName,
+      ),
     );
   }
 
@@ -74,6 +82,47 @@ class _MyHomePageState extends State<MyHomePage> {
                 .update(record.reference, {'votes': fresh.votes + 1});
           }),
         ),
+      ),
+    );
+  }
+
+  final _formKey = GlobalKey<FormState>();
+  void _newName() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          return Scaffold(
+            appBar: AppBar(title: Text('Add Nickname')),
+            body: Column(
+              children: <Widget>[
+                FormBuilder(
+                  key: _formKey,
+                  initialValue: {
+                    'name': 'Sir rocks a lot',
+                    'accept_terms': false,
+                  },
+                  autovalidate: true,
+                  child: Column(
+                    children: <Widget>[
+                      FormBuilderTextField(
+                        attribute: "Name",
+                        decoration: InputDecoration(labelText: "Name"),
+                      ),
+                    ],
+                  ),
+                ),
+                Row(
+                  children: <Widget>[
+                    MaterialButton(
+                      child: Text("Submit"),
+                      onPressed: () {},
+                    ),
+                  ],
+                )
+              ],
+            ),
+          );
+        },
       ),
     );
   }
