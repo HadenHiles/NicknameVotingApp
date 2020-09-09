@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "61965569840",
+    "firebase_url": "https://nicknames-app-db.firebaseio.com",
+    "project_id": "nicknames-app-db",
+    "storage_bucket": "nicknames-app-db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61965569840:android:df707438364a571f0fc2f5",
+        "android_client_info": {
+          "package_name": "com.example.nicknames"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "61965569840-9v1bkpbfl5t8uua0qsaoka75tpeus1p4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRV8d8gmT2fpSrKlygcqvMA60NiB1-5YI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "61965569840-9v1bkpbfl5t8uua0qsaoka75tpeus1p4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
