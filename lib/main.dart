@@ -33,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: _buildBody(context),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.plus_one),
+        child: Icon(Icons.add),
         onPressed: _newName,
       ),
     );
@@ -68,8 +68,31 @@ class _MyHomePageState extends State<MyHomePage> {
           borderRadius: BorderRadius.circular(5.0),
         ),
         child: ListTile(
-          title: Text(record.name),
-          trailing: Text(record.votes.toString()),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(record.name),
+              Text(record.votes.toString()),
+            ],
+          ),
+          trailing: IconButton(
+            icon: Icon(
+              Icons.delete,
+              color: Colors.red,
+            ),
+            onPressed: () => Firestore.instance.runTransaction(
+              (transaction) async {
+                await transaction.delete(record.reference);
+
+                final snackBar = SnackBar(
+                  content: Text('Name deleted'),
+                  backgroundColor: Color.fromARGB(255, 20, 52, 90),
+                );
+
+                Scaffold.of(context).showSnackBar(snackBar);
+              },
+            ),
+          ),
           // Quick for simple increment
           // onTap: () => record.reference.updateData(
           //   {'votes': FieldValue.increment(1)},
@@ -81,12 +104,26 @@ class _MyHomePageState extends State<MyHomePage> {
             await transaction
                 .update(record.reference, {'votes': fresh.votes + 1});
           }),
+          onLongPress: () =>
+              Firestore.instance.runTransaction((transaction) async {
+            await transaction.update(record.reference, {'votes': 0});
+          }),
         ),
       ),
     );
   }
 
   final _formKey = GlobalKey<FormState>();
+  // Create a text controller and use it to retrieve the current value of the TextField.
+  final nameFieldController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    nameFieldController.dispose();
+    super.dispose();
+  }
+
   void _newName() {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
@@ -104,8 +141,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   autovalidate: true,
                   child: Column(
                     children: <Widget>[
-                      FormBuilderTextField(
-                        attribute: "Name",
+                      TextFormField(
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please enter some text';
+                          }
+                          return null;
+                        },
+                        controller: nameFieldController,
                         decoration: InputDecoration(labelText: "Name"),
                       ),
                     ],
@@ -113,9 +156,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 Row(
                   children: <Widget>[
-                    MaterialButton(
-                      child: Text("Submit"),
-                      onPressed: () {},
+                    RaisedButton(
+                      child: Text("Add"),
+                      onPressed: () {
+                        Firestore.instance.collection('name').add({
+                          'name': nameFieldController.text.toString(),
+                          'votes': 0
+                        });
+
+                        nameFieldController.value = TextEditingValue(text: '');
+
+                        Navigator.of(context).pop();
+                      },
                     ),
                   ],
                 )
